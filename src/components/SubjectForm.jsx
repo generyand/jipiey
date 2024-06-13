@@ -30,7 +30,7 @@ export default function SubjectForm({ onAddSubject, subjects }) {
       <div className="flex-3">
         <p>Title</p>
         <input
-          className=""
+          className="rounded-md "
           placeholder={`Subject ${subjects.length + 1}`}
           type="text"
           value={subjectName}
@@ -42,7 +42,7 @@ export default function SubjectForm({ onAddSubject, subjects }) {
       <div className="flex-3">
         <p>Unit</p>
         <input
-          className="no-spinner"
+          className="rounded-md no-spinner"
           type="number"
           value={credits === 0 ? "" : credits}
           onChange={(e) => setCredits(Number(e.target.value))}
