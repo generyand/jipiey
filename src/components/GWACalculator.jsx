@@ -4,13 +4,7 @@ import SubjectForm from "./SubjectForm";
 import SubjectList from "./SubjectList";
 import { motion } from "framer-motion";
 
-// const GRADES = {
-//     "4.0": 4.0,
-//     "3.5": 3.5,
-//     "3.0": 3.0,
-//     "2.5": 2.5,
-//     "2.0": 2.0,
-// }
+
 
 export default function GWACalculator() {
   const [subjects, setSubjects] = useState([]);
