@@ -11,7 +11,7 @@ export default function SubjectList({
       <div>
         <h2 className="subtitle">Subject List</h2>
         <ul className="flex gap-4 py-2 font-medium border-b border-b-gray-200">
-          <li className="flex-[4_4_0%]">Title</li>
+          <li className="flex-[5_5_0%]">Title</li>
           <li className="flex-[3_3_0%]">Unit</li>
           <li className="flex-[3_3_0%]">Grade</li>
           <li className="flex-[3_3_0%]">Action</li>
@@ -21,7 +21,7 @@ export default function SubjectList({
             className="flex items-center gap-4 py-2 border-b border-b-gray-200"
             key={index}
           >
-            <li className="flex-[4_4_0%] truncate">
+            <li className="flex-[5_5_0%] truncate">
               {subject.subjectName
                 ? subject.subjectName
                 : `Subject ${index + 1}`}
