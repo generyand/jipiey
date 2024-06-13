@@ -44,7 +44,7 @@ export default function SubjectForm({ onAddSubject, subjects }) {
         <input
           className="no-spinner"
           type="number"
-          value={credits}
+          value={credits === 0 ? "" : credits}
           onChange={(e) => setCredits(Number(e.target.value))}
         />
       </div>

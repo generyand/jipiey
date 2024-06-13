@@ -7,10 +7,10 @@ export default function SubjectList({
   calculateGWA,
 }) {
   return (
-    <div className="section2">
-      <div>
+    <div className="">
+      <div className="">
         <h2 className="subtitle">Subject List</h2>
-        <ul className="flex gap-4 py-2 font-medium border-b border-b-gray-200">
+        <ul className="flex gap-4 py-2 font-medium border-b border-b-gray-200 ">
           <li className="flex-[5_5_0%]">Title</li>
           <li className="flex-[3_3_0%]">Unit</li>
           <li className="flex-[3_3_0%]">Grade</li>
