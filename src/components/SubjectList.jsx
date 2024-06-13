@@ -13,7 +13,7 @@ export default function SubjectList({
         <ul className="flex gap-4 py-2 font-medium border-b border-b-gray-200">
           <li className="flex-1">Title</li>
           <li className="flex-1">Unit</li>
-          <li className="flex-1">Final Grade</li>
+          <li className="flex-1">Grade</li>
           <li className="flex-1">Action</li>
         </ul>
         {subjects.map((subject, index) => (
