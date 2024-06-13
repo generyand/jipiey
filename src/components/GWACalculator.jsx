@@ -39,7 +39,7 @@ export default function GWACalculator() {
 
   return (
     <div className="max-w-2xl mx-auto my-[12vh]">
-      <h1 className="mb-4 text-center title">GWA Calculator</h1>
+      <h1 className="mb-4 text-center title">Calculate Your GWA</h1>
       <motion.div
       initial={{ height: "fit-content" }}
       animate={{ height: "auto" }}
