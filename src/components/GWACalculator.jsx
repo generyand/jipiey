@@ -38,12 +38,16 @@ export default function GWACalculator() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto my-[12vh]">
-      <h1 className="mb-4 text-center title">Calculate Your GWA</h1>
+    <div className="max-w-2xl mx-auto my-[10vh]">
+      <h1 className="mx-2 mb-1 text-center title">Calculate Your GWA</h1>
+      <p className="mx-4 mb-4 text-center max-w-[40ch]:">
+        Want to calculate your GWA? Use this form to add your subjects. It will automatically calculate your GWA as you add subjects.
+      </p>
       <motion.div
-      initial={{ height: "fit-content" }}
-      animate={{ height: "auto" }}
-      className="p-4 mx-2 transition-[height] bg-white rounded-md shadow-md">
+        initial={{ height: "fit-content" }}
+        animate={{ height: "auto" }}
+        className="p-4 mx-2 transition-[height] bg-white rounded-md shadow-md"
+      >
         <SubjectForm onAddSubject={handleAddSubject} subjects={subjects} />
         <SubjectList
           subjects={subjects}
