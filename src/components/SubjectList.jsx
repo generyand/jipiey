@@ -11,24 +11,24 @@ export default function SubjectList({
       <div>
         <h2 className="subtitle">Subject List</h2>
         <ul className="flex gap-4 py-2 font-medium border-b border-b-gray-200">
-          <li className="flex-1">Title</li>
-          <li className="flex-1">Unit</li>
-          <li className="flex-1">Grade</li>
-          <li className="flex-1">Action</li>
+          <li className="flex-[4_4_0%]">Title</li>
+          <li className="flex-[3_3_0%]">Unit</li>
+          <li className="flex-[3_3_0%]">Grade</li>
+          <li className="flex-[3_3_0%]">Action</li>
         </ul>
         {subjects.map((subject, index) => (
           <ul
             className="flex items-center gap-4 py-2 border-b border-b-gray-200"
             key={index}
           >
-            <li className="flex-1 truncate">
+            <li className="flex-[4_4_0%] truncate">
               {subject.subjectName
                 ? subject.subjectName
                 : `Subject ${index + 1}`}
             </li>
-            <li className="flex-1 truncate">{subject.credits}</li>
-            <li className="flex-1 truncate">{subject.grade}</li>
-            <li className="flex-1 truncate">
+            <li className="flex-[3_3_0%] truncate">{subject.credits}</li>
+            <li className="flex-[3_3_0%] truncate">{subject.grade}</li>
+            <li className="flex-[3_3_0%] truncate">
               <button
                 className="px-4 py-2 text-white transition bg-red-500 rounded-md active:bg-red-400"
                 onClick={() => onRemoveSubject(index)}
