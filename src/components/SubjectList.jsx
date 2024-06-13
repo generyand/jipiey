@@ -1,0 +1,49 @@
+import { TrashIcon } from "@heroicons/react/20/solid";
+import React from "react";
+
+export default function SubjectList({
+  subjects,
+  onRemoveSubject,
+  calculateGWA,
+}) {
+  return (
+    <div className="section2">
+      <div>
+        <h2 className="subtitle">Subject List</h2>
+        <ul className="flex gap-4 py-2 font-medium border-b border-b-gray-200">
+          <li className="flex-1">Title</li>
+          <li className="flex-1">Unit</li>
+          <li className="flex-1">Final Grade</li>
+          <li className="flex-1">Action</li>
+        </ul>
+        {subjects.map((subject, index) => (
+          <ul
+            className="flex items-center gap-4 py-2 border-b border-b-gray-200"
+            key={index}
+          >
+            <li className="flex-1 truncate">
+              {subject.subjectName
+                ? subject.subjectName
+                : `Subject ${index + 1}`}
+            </li>
+            <li className="flex-1 truncate">{subject.credits}</li>
+            <li className="flex-1 truncate">{subject.grade}</li>
+            <li className="flex-1 truncate">
+              <button
+                className="px-4 py-2 text-white transition bg-red-500 rounded-md active:bg-red-400"
+                onClick={() => onRemoveSubject(index)}
+              >
+                <TrashIcon className="w-5 h-5" />
+              </button>
+            </li>
+          </ul>
+        ))}
+      </div>
+      <div>
+        <p className="mt-4 text-base font-bold">
+          GWA: {calculateGWA().toFixed(2)}
+        </p>
+      </div>
+    </div>
+  );
+}

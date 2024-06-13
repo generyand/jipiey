@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-gray-800 bg-slate-100;
+  }
+
+  .outlined {
+    @apply outline outline-red-700 outline-1;
+  }
+
+  .title {
+    @apply text-2xl font-bold;
+  }
+
+  .subtitle {
+    @apply text-xl font-bold;
+  }
+
+  input {
+    @apply w-full px-3 py-2 leading-tight text-gray-700 border border-gray-500 rounded appearance-none focus-visible:outline-none;
+  }
+
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+  }
+}
