@@ -39,7 +39,7 @@ export default function GWACalculator() {
   return (
     <div className="max-w-2xl mx-auto my-[12vh]">
       <h1 className="mb-4 text-center title">GWA Calculator</h1>
-      <div className="p-4 mx-2 bg-white rounded-md shadow-md ">
+      <div className="p-4 mx-2 transition-[height] bg-white rounded-md shadow-md">
         <SubjectForm onAddSubject={handleAddSubject} subjects={subjects} />
         <SubjectList
           subjects={subjects}

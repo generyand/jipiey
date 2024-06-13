@@ -1,5 +1,6 @@
 import { TrashIcon } from "@heroicons/react/20/solid";
 import React from "react";
+import { motion } from "framer-motion";
 
 export default function SubjectList({
   subjects,
@@ -7,7 +8,7 @@ export default function SubjectList({
   calculateGWA,
 }) {
   return (
-    <div className="">
+    <div className="transition">
       <div className="">
         <h2 className="subtitle">Subject List</h2>
         <ul className="flex gap-4 py-2 font-medium border-b border-b-gray-200 ">
@@ -17,7 +18,11 @@ export default function SubjectList({
           <li className="flex-[3_3_0%]">Action</li>
         </ul>
         {subjects.map((subject, index) => (
-          <ul
+          <motion.ul
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.25 }}
+            exit={{ opacity: 0, scale: 0.9 }}
             className="flex items-center gap-4 py-2 border-b border-b-gray-200"
             key={index}
           >
@@ -36,7 +41,7 @@ export default function SubjectList({
                 <TrashIcon className="w-5 h-5" />
               </button>
             </li>
-          </ul>
+          </motion.ul>
         ))}
       </div>
       <div>
