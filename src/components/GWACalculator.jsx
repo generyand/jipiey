@@ -2,6 +2,7 @@
 import { useState } from "react";
 import SubjectForm from "./SubjectForm";
 import SubjectList from "./SubjectList";
+import { motion } from "framer-motion";
 
 // const GRADES = {
 //     "4.0": 4.0,
@@ -20,6 +21,7 @@ export default function GWACalculator() {
 
   const handleRemoveSubject = (index) => {
     const updatedSubjects = subjects.filter((subject, i) => i !== index);
+    // onRemoveSubject(index);
     setSubjects(updatedSubjects);
   };
 
@@ -32,21 +34,23 @@ export default function GWACalculator() {
       totalCredits += subject.credits;
     });
 
-
     return totalCredits === 0 ? 0 : totalGradePoints / totalCredits;
   };
 
   return (
     <div className="max-w-2xl mx-auto my-[12vh]">
       <h1 className="mb-4 text-center title">GWA Calculator</h1>
-      <div className="p-4 mx-2 transition-[height] bg-white rounded-md shadow-md">
+      <motion.div
+      initial={{ height: "fit-content" }}
+      animate={{ height: "auto" }}
+      className="p-4 mx-2 transition-[height] bg-white rounded-md shadow-md">
         <SubjectForm onAddSubject={handleAddSubject} subjects={subjects} />
         <SubjectList
           subjects={subjects}
           onRemoveSubject={handleRemoveSubject}
           calculateGWA={calculateGWA}
         />
-      </div>
+      </motion.div>
     </div>
   );
 }

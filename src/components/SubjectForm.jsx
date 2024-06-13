@@ -25,7 +25,7 @@ export default function SubjectForm({ onAddSubject, subjects }) {
   };
 
   return (
-    <div className="form-container | flex gap-4 mb-8 w-full items-center">
+    <div className="form-container | flex gap-4 mb-8 w-full items-center transition-[height]">
       {/* Subject */}
       <div className="flex-3">
         <p>Title</p>
