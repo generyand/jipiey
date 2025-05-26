@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Jipiey - AI-Powered GPA Calculator
+
+Jipiey is an intelligent GPA calculator that uses AI to analyze and process grade tables from uploaded images. Simply upload an image of your grades in tabular format, and our AI will automatically calculate your GPA and generate a structured table from the image.
+
+## Features
+
+- 📸 Image Upload: Upload images containing grade tables
+- 🤖 AI Analysis: Automatic extraction and processing of grade data
+- 📊 GPA Calculation: Accurate GPA computation based on extracted grades
+- 📋 Table Generation: Clean, formatted table output of your grades
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then, run the development server:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+
+## Technology Stack
+
+- [Next.js](https://nextjs.org) - React framework for production
+- [pnpm](https://pnpm.io) - Fast, disk space efficient package manager
+- AI/ML technologies for image processing and data extraction
+
+## Development
+
+The main application code is located in the `app` directory. The page auto-updates as you edit the files.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+To learn more about the technologies used in this project:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Next.js Learn](https://nextjs.org/learn)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+This application can be deployed on [Vercel](https://vercel.com) for optimal performance and easy setup.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contributions are welcome! Please feel free to submit a Pull Request.
