@@ -71,18 +71,19 @@ export default function GPACalculator() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+    <div className="w-full max-w-4xl mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
+      <div className="text-center mb-4 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           GPA Calculator
         </h1>
-        <p className="text-slate-500 mt-2">
+        <p className="text-slate-500 mt-1 sm:mt-2 text-sm sm:text-base">
           Add your courses, units, and grades to calculate your GPA
         </p>
       </div>
       
       <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl overflow-hidden">
-        <div className="grid grid-cols-12 gap-4 p-4 font-medium text-sm border-b border-white/10 bg-black/20">
+        {/* Headers - Hide on mobile, show on larger screens */}
+        <div className="hidden sm:grid grid-cols-12 gap-4 p-4 font-medium text-sm border-b border-white/10 bg-black/20">
           <div className="col-span-5">Course Title (optional)</div>
           <div className="col-span-2 text-center">Units</div>
           <div className="col-span-3 text-center">Grade</div>
@@ -91,8 +92,12 @@ export default function GPACalculator() {
         
         <div className="divide-y divide-white/5">
           {courses.map((course) => (
-            <div key={course.id} className="grid grid-cols-12 gap-4 p-4 items-center">
-              <div className="col-span-5">
+            <div key={course.id} className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-4 p-3 sm:p-4 items-start sm:items-center">
+              {/* Mobile field labels */}
+              <div className="w-full flex flex-wrap gap-2 sm:hidden">
+                <span className="text-xs font-medium text-slate-400">Course Title (optional)</span>
+              </div>
+              <div className="w-full sm:col-span-5">
                 <input
                   type="text"
                   value={course.title}
@@ -101,7 +106,38 @@ export default function GPACalculator() {
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                 />
               </div>
-              <div className="col-span-2">
+              
+              <div className="w-full flex flex-wrap justify-between sm:hidden mt-2">
+                <span className="text-xs font-medium text-slate-400">Units</span>
+                <span className="text-xs font-medium text-slate-400">Grade</span>
+              </div>
+              <div className="flex w-full justify-between gap-3 sm:hidden">
+                <div className="w-1/2">
+                  <input
+                    type="number"
+                    min="0"
+                    max="6"
+                    value={course.units}
+                    onChange={(e) => updateCourse(course.id, 'units', parseFloat(e.target.value) || 0)}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                </div>
+                <div className="w-1/2">
+                  <input
+                    type="number"
+                    min="0"
+                    max="4"
+                    step="0.1"
+                    value={course.grade === null ? '' : course.grade}
+                    onChange={(e) => handleGradeChange(course.id, e.target.value)}
+                    placeholder="Enter grade"
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                </div>
+              </div>
+              
+              {/* Desktop layout units input (hidden on mobile) */}
+              <div className="hidden sm:block sm:col-span-2">
                 <input
                   type="number"
                   min="0"
@@ -111,7 +147,9 @@ export default function GPACalculator() {
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
               </div>
-              <div className="col-span-3">
+              
+              {/* Desktop layout grade input (hidden on mobile) */}
+              <div className="hidden sm:block sm:col-span-3">
                 <input
                   type="number"
                   min="0"
@@ -123,7 +161,18 @@ export default function GPACalculator() {
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
               </div>
-              <div className="col-span-2 text-center">
+              
+              <div className="w-full flex justify-end mt-2 sm:hidden">
+                <button
+                  onClick={() => removeCourse(course.id)}
+                  className="p-2 text-red-400 hover:text-red-300 transition rounded-full hover:bg-red-500/10"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+              
+              {/* Desktop actions (hidden on mobile) */}
+              <div className="hidden sm:block sm:col-span-2 text-center">
                 <button
                   onClick={() => removeCourse(course.id)}
                   className="p-2 text-red-400 hover:text-red-300 transition rounded-full hover:bg-red-500/10"
@@ -135,16 +184,16 @@ export default function GPACalculator() {
           ))}
         </div>
         
-        <div className="p-4 flex justify-between items-center bg-gradient-to-r from-blue-900/20 to-purple-900/20">
+        <div className="p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-center gap-3 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
           <button
             onClick={addCourse}
-            className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition bg-blue-500/10 sm:bg-transparent py-2 px-3 sm:px-0 rounded-lg sm:rounded-none"
           >
             <PlusCircle size={16} /> Add Course
           </button>
           
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-blue-600/20 px-4 py-2 rounded-lg">
+          <div className="flex items-center justify-center w-full sm:w-auto">
+            <div className="flex items-center gap-2 bg-blue-600/20 px-4 py-2 rounded-lg w-full sm:w-auto justify-center sm:justify-start">
               <Calculator size={18} className="text-blue-400" />
               <div>
                 <div className="text-xs text-blue-300">Your GPA</div>
@@ -157,7 +206,7 @@ export default function GPACalculator() {
         </div>
       </div>
       
-      <div className="text-xs text-center text-slate-500 mt-6">
+      <div className="text-xs text-center text-slate-500 mt-4 sm:mt-6">
         GPA is calculated by dividing total grade points by total units.
       </div>
     </div>
