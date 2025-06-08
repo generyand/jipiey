@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Trash2, PlusCircle, Calculator } from 'lucide-react';
+import { Trash2, PlusCircle, Calculator, X, Check } from 'lucide-react';
 
 interface Course {
   id: string;
@@ -10,23 +10,39 @@ interface Course {
   grade: number | null;
 }
 
+// Generate a random ID that works across all browsers
+const generateId = () => {
+  return Math.random().toString(36).substring(2, 15) + 
+         Math.random().toString(36).substring(2, 15);
+};
+
 export default function GPACalculator() {
   const [courses, setCourses] = useState<Course[]>([
-    { id: crypto.randomUUID(), title: '', units: 3, grade: 0.0 }
+    { id: generateId(), title: '', units: 3, grade: 0.0 }
   ]);
   
   const [gpa, setGpa] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const addCourse = () => {
     setCourses([
       ...courses,
-      { id: crypto.randomUUID(), title: '', units: 3, grade: 0.0 }
+      { id: generateId(), title: '', units: 3, grade: 0.0 }
     ]);
+  };
+
+  const confirmDelete = (id: string) => {
+    setDeletingId(id);
+  };
+
+  const cancelDelete = () => {
+    setDeletingId(null);
   };
 
   const removeCourse = (id: string) => {
     if (courses.length > 1) {
       setCourses(courses.filter(course => course.id !== id));
+      setDeletingId(null);
     }
   };
 
@@ -163,22 +179,58 @@ export default function GPACalculator() {
               </div>
               
               <div className="w-full flex justify-end mt-2 sm:hidden">
-                <button
-                  onClick={() => removeCourse(course.id)}
-                  className="p-2 text-red-400 hover:text-red-300 transition rounded-full hover:bg-red-500/10"
-                >
-                  <Trash2 size={18} />
-                </button>
+                {deletingId === course.id ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-red-400">Delete this course?</span>
+                    <button
+                      onClick={() => removeCourse(course.id)}
+                      className="p-2 text-green-400 hover:text-green-300 transition rounded-full hover:bg-green-500/10"
+                    >
+                      <Check size={18} />
+                    </button>
+                    <button
+                      onClick={cancelDelete}
+                      className="p-2 text-red-400 hover:text-red-300 transition rounded-full hover:bg-red-500/10"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => confirmDelete(course.id)}
+                    className="p-2 text-red-400 hover:text-red-300 transition rounded-full hover:bg-red-500/10"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
               </div>
               
               {/* Desktop actions (hidden on mobile) */}
               <div className="hidden sm:block sm:col-span-2 text-center">
-                <button
-                  onClick={() => removeCourse(course.id)}
-                  className="p-2 text-red-400 hover:text-red-300 transition rounded-full hover:bg-red-500/10"
-                >
-                  <Trash2 size={18} />
-                </button>
+                {deletingId === course.id ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-xs text-red-400">Delete?</span>
+                    <button
+                      onClick={() => removeCourse(course.id)}
+                      className="p-2 text-green-400 hover:text-green-300 transition rounded-full hover:bg-green-500/10"
+                    >
+                      <Check size={18} />
+                    </button>
+                    <button
+                      onClick={cancelDelete}
+                      className="p-2 text-red-400 hover:text-red-300 transition rounded-full hover:bg-red-500/10"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => confirmDelete(course.id)}
+                    className="p-2 text-red-400 hover:text-red-300 transition rounded-full hover:bg-red-500/10"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
               </div>
             </div>
           ))}
