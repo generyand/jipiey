@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Trash2, PlusCircle, Calculator, X, Check } from 'lucide-react';
+import { Trash2, PlusCircle, Calculator, X, Check, MoreVertical, BookOpen } from 'lucide-react';
 import { 
   Card, 
   CardHeader, 
@@ -29,6 +29,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from '@/lib/utils';
 
 interface Course {
@@ -45,14 +50,13 @@ const generateId = () => {
 };
 
 export default function GPACalculator() {
-  const [courses, setCourses] = useState<Course[]>([
-    { id: generateId(), title: '', units: 3, grade: 0.0 }
-  ]);
+  const [courses, setCourses] = useState<Course[]>([]);
   
   const [gpa, setGpa] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
+  const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
 
   const addCourse = () => {
     setCourses([
@@ -64,6 +68,7 @@ export default function GPACalculator() {
   const confirmDelete = (id: string) => {
     setCourseToDelete(id);
     setShowDeleteDialog(true);
+    setOpenPopoverId(null);
   };
 
   const cancelDelete = () => {
@@ -72,12 +77,16 @@ export default function GPACalculator() {
   };
 
   const removeCourse = () => {
-    if (courses.length > 1 && courseToDelete) {
+    if (courseToDelete) {
       setCourses(courses.filter(course => course.id !== courseToDelete));
       setDeletingId(null);
       setShowDeleteDialog(false);
       setCourseToDelete(null);
     }
+  };
+
+  const handlePopoverOpenChange = (open: boolean, id: string) => {
+    setOpenPopoverId(open ? id : null);
   };
 
   const updateCourse = (id: string, field: keyof Course, value: any) => {
@@ -121,8 +130,8 @@ export default function GPACalculator() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto py-6 px-4 sm:px-8 space-y-6 sm:space-y-8">
-      <Card className="border-none bg-transparent">
+    <div className="w-full max-w-4xl mx-auto sm:py-6 px-2 sm:px-8 sm:space-y-8">
+      <Card className="border-none bg-transparent shadow-none">
         <CardHeader className="text-center px-0 pb-2 sm:pb-4">
           <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
             GPA Calculator
@@ -133,41 +142,156 @@ export default function GPACalculator() {
         </CardHeader>
         
         <CardContent className="p-0 mt-6">
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl overflow-hidden">
-            {/* Desktop View with Table */}
-            <div className="hidden sm:block">
-              <Table>
-                <TableHeader className="bg-black/20 border-b border-white/10">
-                  <TableRow className="hover:bg-transparent border-none">
-                    <TableHead className="text-white/90 font-medium py-4 px-5">Course Title (optional)</TableHead>
-                    <TableHead className="text-white/90 font-medium text-center py-4">Units</TableHead>
-                    <TableHead className="text-white/90 font-medium text-center py-4">Grade</TableHead>
-                    <TableHead className="text-white/90 font-medium text-center py-4 w-[100px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {courses.map((course) => (
-                    <TableRow key={course.id} className="hover:bg-white/5 border-white/5">
-                      <TableCell className="text-white/90 py-4 px-5">
-                        <Input
-                          type="text"
-                          value={course.title}
-                          onChange={(e) => updateCourse(course.id, 'title', e.target.value)}
-                          placeholder="Course Title (optional)"
-                          className="bg-white/5 border-white/10 focus-visible:ring-blue-500 text-white placeholder:text-white/50 h-10"
-                        />
-                      </TableCell>
-                      <TableCell className="text-center text-white/90 py-4">
+          {courses.length === 0 ? (
+            // Empty state
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl overflow-hidden">
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-5">
+                  <BookOpen className="w-8 h-8 text-blue-400" />
+                </div>
+                <h3 className="text-xl font-medium text-white mb-2">No courses added yet</h3>
+                <p className="text-slate-300 max-w-md mb-8">
+                  Add your first course to begin calculating your GPA. You'll need course names, credit units, and grades.
+                </p>
+                <Button
+                  onClick={addCourse}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg h-11 font-medium"
+                >
+                  <PlusCircle size={18} />
+                  Add Your First Course
+                </Button>
+              </div>
+            </div>
+          ) : (
+            // Course list
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl overflow-hidden">
+              {/* Desktop View with Table */}
+              <div className="hidden sm:block">
+                <Table>
+                  <TableHeader className="bg-black/20 border-b border-white/10">
+                    <TableRow className="hover:bg-transparent border-none">
+                      <TableHead className="text-white/90 font-medium py-4 px-5">Course Title (optional)</TableHead>
+                      <TableHead className="text-white/90 font-medium text-center py-4">Units</TableHead>
+                      <TableHead className="text-white/90 font-medium text-center py-4">Grade</TableHead>
+                      <TableHead className="text-white/90 font-medium text-center py-4 w-[100px]">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {courses.map((course) => (
+                      <TableRow key={course.id} className="hover:bg-white/5 border-white/5">
+                        <TableCell className="text-white/90 py-4 px-5">
+                          <Input
+                            type="text"
+                            value={course.title}
+                            onChange={(e) => updateCourse(course.id, 'title', e.target.value)}
+                            placeholder="Course Title (optional)"
+                            className="bg-white/5 border-white/10 focus-visible:ring-blue-500 text-white placeholder:text-white/50 h-10"
+                          />
+                        </TableCell>
+                        <TableCell className="text-center text-white/90 py-4">
+                          <Input
+                            type="number"
+                            min="0"
+                            max="6"
+                            value={course.units}
+                            onChange={(e) => updateCourse(course.id, 'units', parseFloat(e.target.value) || 0)}
+                            className="bg-white/5 border-white/10 text-center w-full focus-visible:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white h-10 mx-auto max-w-24"
+                          />
+                        </TableCell>
+                        <TableCell className="text-center text-white/90 py-4">
+                          <Input
+                            type="number"
+                            min="0"
+                            max="4"
+                            step="0.1"
+                            value={course.grade === null ? '' : course.grade}
+                            onChange={(e) => handleGradeChange(course.id, e.target.value)}
+                            placeholder="Enter grade"
+                            className="bg-white/5 border-white/10 text-center w-full focus-visible:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white placeholder:text-white/50 h-10 mx-auto max-w-24"
+                          />
+                        </TableCell>
+                        <TableCell className="text-center py-4">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => confirmDelete(course.id)}
+                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-10 w-10 rounded-full"
+                          >
+                            <Trash2 size={18} />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              
+              {/* Mobile View */}
+              <div className="sm:hidden divide-y divide-white/5">
+                {courses.map((course) => (
+                  <div key={course.id} className="flex flex-col p-4 items-start">
+                    {/* Header with Course Title label and Menu */}
+                    <div className="w-full flex items-center justify-between">
+                      <span className="text-xs font-medium text-white/70">Course Title (optional)</span>
+                      
+                      {/* Kebab Menu with Popover */}
+                      <Popover 
+                        open={openPopoverId === course.id}
+                        onOpenChange={(open) => handlePopoverOpenChange(open, course.id)}
+                      >
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-full hover:bg-white/10 text-white/70"
+                            aria-label="Course options"
+                          >
+                            <MoreVertical size={16} />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent 
+                          className="w-36 p-0 bg-slate-800 border border-white/10 rounded-md shadow-lg"
+                          align="end"
+                          sideOffset={5}
+                        >
+                          <Button
+                            variant="ghost"
+                            onClick={() => confirmDelete(course.id)}
+                            className="w-full flex items-center justify-start gap-2 h-9 px-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-none"
+                          >
+                            <Trash2 size={14} />
+                            <span>Delete</span>
+                          </Button>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    
+                    <div className="w-full mb-3">
+                      <Input
+                        type="text"
+                        value={course.title}
+                        onChange={(e) => updateCourse(course.id, 'title', e.target.value)}
+                        placeholder="Course Title (optional)"
+                        className="bg-white/5 border-white/10 focus-visible:ring-blue-500 text-white placeholder:text-white/50 h-10"
+                      />
+                    </div>
+                    
+                    <div className="w-full flex flex-wrap justify-between mb-2">
+                      <span className="text-xs font-medium text-white/70">Units</span>
+                      <span className="text-xs font-medium text-white/70">Grade</span>
+                    </div>
+                    <div className="flex w-full justify-between gap-4 mb-3">
+                      <div className="w-1/2">
                         <Input
                           type="number"
                           min="0"
                           max="6"
                           value={course.units}
                           onChange={(e) => updateCourse(course.id, 'units', parseFloat(e.target.value) || 0)}
-                          className="bg-white/5 border-white/10 text-center w-full focus-visible:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white h-10 mx-auto max-w-24"
+                          className="bg-white/5 border-white/10 text-center focus-visible:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white h-10"
                         />
-                      </TableCell>
-                      <TableCell className="text-center text-white/90 py-4">
+                      </div>
+                      <div className="w-1/2">
                         <Input
                           type="number"
                           min="0"
@@ -176,108 +300,37 @@ export default function GPACalculator() {
                           value={course.grade === null ? '' : course.grade}
                           onChange={(e) => handleGradeChange(course.id, e.target.value)}
                           placeholder="Enter grade"
-                          className="bg-white/5 border-white/10 text-center w-full focus-visible:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white placeholder:text-white/50 h-10 mx-auto max-w-24"
+                          className="bg-white/5 border-white/10 text-center focus-visible:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white placeholder:text-white/50 h-10"
                         />
-                      </TableCell>
-                      <TableCell className="text-center py-4">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => confirmDelete(course.id)}
-                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-10 w-10 rounded-full"
-                        >
-                          <Trash2 size={18} />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            
-            {/* Mobile View */}
-            <div className="sm:hidden divide-y divide-white/5">
-              {courses.map((course) => (
-                <div key={course.id} className="flex flex-col gap-3 p-4 items-start">
-                  {/* Mobile field labels */}
-                  <div className="w-full flex flex-wrap gap-2 mb-1">
-                    <span className="text-xs font-medium text-white/70">Course Title (optional)</span>
-                  </div>
-                  <div className="w-full mb-3">
-                    <Input
-                      type="text"
-                      value={course.title}
-                      onChange={(e) => updateCourse(course.id, 'title', e.target.value)}
-                      placeholder="Course Title (optional)"
-                      className="bg-white/5 border-white/10 focus-visible:ring-blue-500 text-white placeholder:text-white/50 h-10"
-                    />
-                  </div>
-                  
-                  <div className="w-full flex flex-wrap justify-between mb-1">
-                    <span className="text-xs font-medium text-white/70">Units</span>
-                    <span className="text-xs font-medium text-white/70">Grade</span>
-                  </div>
-                  <div className="flex w-full justify-between gap-4 mb-3">
-                    <div className="w-1/2">
-                      <Input
-                        type="number"
-                        min="0"
-                        max="6"
-                        value={course.units}
-                        onChange={(e) => updateCourse(course.id, 'units', parseFloat(e.target.value) || 0)}
-                        className="bg-white/5 border-white/10 text-center focus-visible:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white h-10"
-                      />
-                    </div>
-                    <div className="w-1/2">
-                      <Input
-                        type="number"
-                        min="0"
-                        max="4"
-                        step="0.1"
-                        value={course.grade === null ? '' : course.grade}
-                        onChange={(e) => handleGradeChange(course.id, e.target.value)}
-                        placeholder="Enter grade"
-                        className="bg-white/5 border-white/10 text-center focus-visible:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white placeholder:text-white/50 h-10"
-                      />
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="w-full flex justify-end">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => confirmDelete(course.id)}
-                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-10 w-10 rounded-full"
-                    >
-                      <Trash2 size={18} />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-t border-white/5">
-              <Button
-                variant="ghost"
-                onClick={addCourse}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 text-sm text-blue-400 hover:text-blue-300 bg-blue-500/10 sm:bg-transparent py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
-              >
-                <PlusCircle size={16} className="mr-1" /> Add Course
-              </Button>
+                ))}
+              </div>
               
-              <div className="flex items-center justify-center w-full sm:w-auto">
-                <div className="flex items-center gap-3 bg-blue-600/20 px-5 py-3 rounded-lg w-full sm:w-auto justify-center sm:justify-start">
-                  <Calculator size={18} className="text-blue-400" />
-                  <div>
-                    <div className="text-xs text-blue-300 mb-0.5">Your GPA</div>
-                    <div className="font-bold text-lg text-white">
-                      {gpa !== null ? gpa.toFixed(2) : '—'}
+              <div className="p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-t border-white/5">
+                <Button
+                  variant="ghost"
+                  onClick={addCourse}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 text-sm text-blue-400 hover:text-blue-300 bg-blue-500/10 sm:bg-transparent py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
+                >
+                  <PlusCircle size={16} className="mr-1" /> Add Course
+                </Button>
+                
+                <div className="flex items-center justify-center w-full sm:w-auto">
+                  <div className="flex items-center gap-3 bg-blue-600/20 px-5 py-3 rounded-lg w-full sm:w-auto justify-center sm:justify-start">
+                    <Calculator size={18} className="text-blue-400" />
+                    <div>
+                      <div className="text-xs text-blue-300 mb-0.5">Your GPA</div>
+                      <div className="font-bold text-lg text-white">
+                        {gpa !== null ? gpa.toFixed(2) : '—'}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </CardContent>
         
         <CardFooter className="text-xs text-center text-white/70 mt-6 justify-center p-0">
@@ -298,7 +351,7 @@ export default function GPACalculator() {
             <Button
               variant="outline"
               onClick={cancelDelete}
-              className="border-white/10 hover:bg-white/5 text-white h-10"
+              className="border-white/10 bg-slate-800 hover:bg-white/5 text-white h-10"
             >
               Cancel
             </Button>
