@@ -103,7 +103,7 @@ export default function GPACalculator() {
     let totalUnits = 0;
 
     courses.forEach(course => {
-      if (course.units > 0 && course.grade !== null) {
+      if (course.units > 0 && course.grade !== null && course.grade > 0) {
         totalPoints += course.units * course.grade;
         totalUnits += course.units;
       }
@@ -170,7 +170,7 @@ export default function GPACalculator() {
                 <Table>
                   <TableHeader className="bg-black/20 border-b border-white/10">
                     <TableRow className="hover:bg-transparent border-none">
-                      <TableHead className="text-white/90 font-medium py-4 px-5">Course Title (optional)</TableHead>
+                      <TableHead className="text-white/90 font-medium py-4 px-5">Course Title</TableHead>
                       <TableHead className="text-white/90 font-medium text-center py-4">Units</TableHead>
                       <TableHead className="text-white/90 font-medium text-center py-4">Grade</TableHead>
                       <TableHead className="text-white/90 font-medium text-center py-4 w-[100px]">Actions</TableHead>
@@ -184,7 +184,7 @@ export default function GPACalculator() {
                             type="text"
                             value={course.title}
                             onChange={(e) => updateCourse(course.id, 'title', e.target.value)}
-                            placeholder="Course Title (optional)"
+                            placeholder="Enter course name"
                             className="bg-white/5 border-white/10 focus-visible:ring-blue-500 text-white placeholder:text-white/50 h-10"
                           />
                         </TableCell>
@@ -232,7 +232,7 @@ export default function GPACalculator() {
                   <div key={course.id} className="flex flex-col p-4 items-start">
                     {/* Header with Course Title label and Menu */}
                     <div className="w-full flex items-center justify-between">
-                      <span className="text-xs font-medium text-white/70">Course Title (optional)</span>
+                      <span className="text-xs font-medium text-white/70">Course Title</span>
                       
                       {/* Kebab Menu with Popover */}
                       <Popover 
@@ -271,7 +271,7 @@ export default function GPACalculator() {
                         type="text"
                         value={course.title}
                         onChange={(e) => updateCourse(course.id, 'title', e.target.value)}
-                        placeholder="Course Title (optional)"
+                        placeholder="Enter course name"
                         className="bg-white/5 border-white/10 focus-visible:ring-blue-500 text-white placeholder:text-white/50 h-10"
                       />
                     </div>
@@ -287,7 +287,8 @@ export default function GPACalculator() {
                           min="0"
                           max="6"
                           value={course.units}
-                          onChange={(e) => updateCourse(course.id, 'units', parseFloat(e.target.value) || 0)}
+                          onChange={(e) => updateCourse(course.id, 'units', parseFloat(e.target.value))}
+                          placeholder="Enter Units"
                           className="bg-white/5 border-white/10 text-center focus-visible:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-white h-10"
                         />
                       </div>
@@ -312,7 +313,7 @@ export default function GPACalculator() {
                 <Button
                   variant="ghost"
                   onClick={addCourse}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 text-sm text-blue-400 hover:text-blue-300 bg-blue-500/10 sm:bg-transparent py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
+                  className="cursor-pointer w-full sm:w-auto flex items-center bg-blue-500/10 justify-center gap-2 text-sm text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
                 >
                   <PlusCircle size={16} className="mr-1" /> Add Course
                 </Button>
