@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react';
-import { Trash2, PlusCircle, Calculator, X, Check, MoreVertical, BookOpen } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Trash2, PlusCircle, Calculator, MoreVertical, BookOpen } from 'lucide-react';
 import { 
   Card, 
   CardHeader, 
@@ -27,14 +27,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from '@/lib/utils';
 
 interface Course {
   id: string;
@@ -53,7 +51,6 @@ export default function GPACalculator() {
   const [courses, setCourses] = useState<Course[]>([]);
   
   const [gpa, setGpa] = useState<number | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
@@ -79,7 +76,6 @@ export default function GPACalculator() {
   const removeCourse = () => {
     if (courseToDelete) {
       setCourses(courses.filter(course => course.id !== courseToDelete));
-      setDeletingId(null);
       setShowDeleteDialog(false);
       setCourseToDelete(null);
     }
@@ -89,7 +85,7 @@ export default function GPACalculator() {
     setOpenPopoverId(open ? id : null);
   };
 
-  const updateCourse = (id: string, field: keyof Course, value: any) => {
+  const updateCourse = (id: string, field: keyof Course, value: string | number | null) => {
     setCourses(courses.map(course => {
       if (course.id === id) {
         return { ...course, [field]: value };
@@ -98,7 +94,7 @@ export default function GPACalculator() {
     }));
   };
 
-  const calculateGPA = () => {
+  const calculateGPA = useCallback(() => {
     let totalPoints = 0;
     let totalUnits = 0;
 
@@ -111,11 +107,11 @@ export default function GPACalculator() {
 
     if (totalUnits === 0) return null;
     return totalPoints / totalUnits;
-  };
+  }, [courses]);
 
   useEffect(() => {
     setGpa(calculateGPA());
-  }, [courses]);
+  }, [courses, calculateGPA]);
 
   // Handle grade input change with support for empty values
   const handleGradeChange = (id: string, value: string) => {
@@ -151,7 +147,7 @@ export default function GPACalculator() {
                 </div>
                 <h3 className="text-xl font-medium text-white mb-2">No courses added yet</h3>
                 <p className="text-slate-300 max-w-md mb-8">
-                  Add your first course to begin calculating your GPA. You'll need course names, credit units, and grades.
+                  Add your first course to begin calculating your GPA. You&apos;ll need course names, credit units, and grades.
                 </p>
                 <Button
                   onClick={addCourse}
