@@ -7,12 +7,12 @@ interface Course {
   id: string;
   title: string;
   units: number;
-  grade: number;
+  grade: number | null;
 }
 
 export default function GPACalculator() {
   const [courses, setCourses] = useState<Course[]>([
-    { id: crypto.randomUUID(), title: '', units: 3, grade: 4.0 }
+    { id: crypto.randomUUID(), title: '', units: 3, grade: 0.0 }
   ]);
   
   const [gpa, setGpa] = useState<number | null>(null);
@@ -20,7 +20,7 @@ export default function GPACalculator() {
   const addCourse = () => {
     setCourses([
       ...courses,
-      { id: crypto.randomUUID(), title: '', units: 3, grade: 4.0 }
+      { id: crypto.randomUUID(), title: '', units: 3, grade: 0.0 }
     ]);
   };
 
@@ -44,7 +44,7 @@ export default function GPACalculator() {
     let totalUnits = 0;
 
     courses.forEach(course => {
-      if (course.title && course.units > 0) {
+      if (course.units > 0 && course.grade !== null) {
         totalPoints += course.units * course.grade;
         totalUnits += course.units;
       }
@@ -57,6 +57,18 @@ export default function GPACalculator() {
   useEffect(() => {
     setGpa(calculateGPA());
   }, [courses]);
+
+  // Handle grade input change with support for empty values
+  const handleGradeChange = (id: string, value: string) => {
+    if (value === '') {
+      updateCourse(id, 'grade', null);
+    } else {
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue)) {
+        updateCourse(id, 'grade', numValue);
+      }
+    }
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 space-y-6">
@@ -71,7 +83,7 @@ export default function GPACalculator() {
       
       <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl overflow-hidden">
         <div className="grid grid-cols-12 gap-4 p-4 font-medium text-sm border-b border-white/10 bg-black/20">
-          <div className="col-span-5">Course Title</div>
+          <div className="col-span-5">Course Title (optional)</div>
           <div className="col-span-2 text-center">Units</div>
           <div className="col-span-3 text-center">Grade</div>
           <div className="col-span-2 text-center">Actions</div>
@@ -85,7 +97,7 @@ export default function GPACalculator() {
                   type="text"
                   value={course.title}
                   onChange={(e) => updateCourse(course.id, 'title', e.target.value)}
-                  placeholder="Course Title"
+                  placeholder="Course Title (optional)"
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                 />
               </div>
@@ -96,7 +108,7 @@ export default function GPACalculator() {
                   max="6"
                   value={course.units}
                   onChange={(e) => updateCourse(course.id, 'units', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
               </div>
               <div className="col-span-3">
@@ -105,10 +117,10 @@ export default function GPACalculator() {
                   min="0"
                   max="4"
                   step="0.1"
-                  value={course.grade}
-                  onChange={(e) => updateCourse(course.id, 'grade', parseFloat(e.target.value) || 0)}
-                  placeholder="Enter grade (e.g. 4.0)"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  value={course.grade === null ? '' : course.grade}
+                  onChange={(e) => handleGradeChange(course.id, e.target.value)}
+                  placeholder="Enter grade"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
               </div>
               <div className="col-span-2 text-center">
