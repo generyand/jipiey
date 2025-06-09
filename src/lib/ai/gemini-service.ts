@@ -104,8 +104,12 @@ export class GeminiService {
         - If you're unsure about any value, use null
         - Only return the JSON array, nothing else
         - Make sure the JSON is valid and properly formatted
-        - If there are no column headers, note that units/credits are typically whole numbers (like 3, 4), while grades often have decimal points (like 3.0, 3.5, 2.7)
-        - Units typically range from 1-6, while grades typically range from 0-4
+        - CRITICAL DISTINCTION: Units MUST be whole numbers (integers like 1, 2, 3, 4) WITHOUT ANY decimal places
+        - Units are almost always between 1-6
+        - Grades CAN and OFTEN DO have decimal places (like 3.0, 3.5, 2.7, 4.0) 
+        - Grades typically range from 0.0 to 4.0
+        - If you see a column with decimal numbers, those are almost certainly grades, NOT units
+        - If you're unsure which column is which, units are ALWAYS whole numbers without decimals
       `;
 
       // Create content with image and prompt
