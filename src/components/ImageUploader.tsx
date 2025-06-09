@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useGradeExtraction } from '@/lib/ai/useGradeExtraction';
-import { Course } from '@/lib/ai/types';
+import { Course } from '@/types';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { 

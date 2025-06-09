@@ -1,4 +1,4 @@
-import { Course, CourseData } from "./types";
+import { Course, CourseData } from "@/types";
 import { API_BASE_URL } from "./config";
 
 export class GeminiService {

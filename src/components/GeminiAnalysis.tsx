@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useGemini } from '@/lib/ai/useGemini';
-import { Course } from '@/lib/ai/types';
+import { Course } from '@/types';
 import { 
   Card, 
   CardHeader, 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GeminiService } from './gemini-service';
-import { Course } from './types';
+import { Course } from '@/types';
 
 interface UseGradeExtractionReturn {
   extracting: boolean;

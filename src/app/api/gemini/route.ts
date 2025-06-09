@@ -1,6 +1,6 @@
 import { GoogleGenAI, createUserContent } from "@google/genai";
 import { NextResponse } from "next/server";
-import { Course, CourseData } from "@/lib/ai/types";
+import { Course, CourseData } from "@/types";
 
 // Initialize the Gemini API client with server-side API key
 const initGeminiClient = () => {
