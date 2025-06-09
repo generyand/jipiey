@@ -26,8 +26,10 @@ The application uses Google's Gemini AI for grade analysis. To set up the Gemini
 2. Create a `.env.local` file in the root of the project
 3. Add your API key to the file:
    ```env
-   NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
+   # Use GEMINI_API_KEY (not prefixed with NEXT_PUBLIC) to keep it server-side only
+   GEMINI_API_KEY=your_gemini_api_key_here
    ```
+   ⚠️ Note: Never use NEXT_PUBLIC_ prefix for API keys as it exposes them to the client
 
 Then, run the development server:
 

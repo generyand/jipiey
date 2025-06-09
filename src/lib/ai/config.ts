@@ -13,4 +13,7 @@ export const getAIConfig = () => {
 };
 
 // Define the model to use
-export const GEMINI_MODEL = "gemini-2.0-flash"; 
+export const GEMINI_MODEL = "gemini-2.0-flash";
+
+// Base URL for API requests
+export const API_BASE_URL = "/api/gemini"; 
