@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react';
-import { Trash2, PlusCircle, Calculator, MoreVertical, BookOpen } from 'lucide-react';
+import { Trash2, PlusCircle, Calculator, MoreVertical, BookOpen, Brain, ImageIcon } from 'lucide-react';
 import { 
   Card, 
   CardHeader, 
@@ -33,6 +33,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import GeminiAnalysis from './GeminiAnalysis';
+import ImageUploader from './ImageUploader';
 
 interface Course {
   id: string;
@@ -54,6 +56,8 @@ export default function GPACalculator() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
+  const [showAIAnalysis, setShowAIAnalysis] = useState(false);
+  const [showImageUpload, setShowImageUpload] = useState(false);
 
   const addCourse = () => {
     setCourses([
@@ -125,6 +129,13 @@ export default function GPACalculator() {
     }
   };
 
+  // Handler for extracted courses from image
+  const handleCoursesExtracted = (extractedCourses: Course[]) => {
+    // Replace existing courses with extracted ones or merge them
+    setCourses(prev => [...prev, ...extractedCourses]);
+    setShowImageUpload(false);
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto sm:py-6 px-2 sm:px-8 sm:space-y-8">
       <Card className="border-none bg-transparent shadow-none">
@@ -149,13 +160,22 @@ export default function GPACalculator() {
                 <p className="text-slate-300 max-w-md mb-8">
                   Add your first course to begin calculating your GPA. You&apos;ll need course names, credit units, and grades.
                 </p>
-                <Button
-                  onClick={addCourse}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg h-11 font-medium"
-                >
-                  <PlusCircle size={18} />
-                  Add Your First Course
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={addCourse}
+                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg h-11 font-medium"
+                  >
+                    <PlusCircle size={18} />
+                    Add Your First Course
+                  </Button>
+                  <Button
+                    onClick={() => setShowImageUpload(true)}
+                    className="flex items-center gap-2 bg-purple-600/90 hover:bg-purple-700 text-white px-6 py-2 rounded-lg h-11 font-medium"
+                  >
+                    <ImageIcon size={18} />
+                    Upload Grade Image
+                  </Button>
+                </div>
               </div>
             </div>
           ) : (
@@ -306,13 +326,23 @@ export default function GPACalculator() {
               </div>
               
               <div className="p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-t border-white/5">
-                <Button
-                  variant="ghost"
-                  onClick={addCourse}
-                  className="cursor-pointer w-full sm:w-auto flex items-center bg-blue-500/10 justify-center gap-2 text-sm text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
-                >
-                  <PlusCircle size={16} className="mr-1" /> Add Course
-                </Button>
+                <div className="flex w-full sm:w-auto gap-2">
+                  <Button
+                    variant="ghost"
+                    onClick={addCourse}
+                    className="cursor-pointer flex-1 sm:flex-initial flex items-center bg-blue-500/10 justify-center gap-2 text-sm text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
+                  >
+                    <PlusCircle size={16} className="mr-1" /> Add Course
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowImageUpload(true)}
+                    className="cursor-pointer flex-1 sm:flex-initial flex items-center bg-purple-500/10 justify-center gap-2 text-sm text-purple-400 hover:bg-purple-500/20 hover:text-purple-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
+                  >
+                    <ImageIcon size={16} className="mr-1" /> Upload Image
+                  </Button>
+                </div>
                 
                 <div className="flex items-center justify-center w-full sm:w-auto">
                   <div className="flex items-center gap-3 bg-blue-600/20 px-5 py-3 rounded-lg w-full sm:w-auto justify-center sm:justify-start">
@@ -360,6 +390,28 @@ export default function GPACalculator() {
               Delete
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* AI Analysis Dialog */}
+      <Dialog open={showAIAnalysis} onOpenChange={setShowAIAnalysis}>
+        <DialogContent className="bg-transparent border-none shadow-none max-w-2xl">
+          <DialogTitle className="sr-only">AI GPA Analysis</DialogTitle>
+          <GeminiAnalysis 
+            courses={courses} 
+            onClose={() => setShowAIAnalysis(false)} 
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Image Upload Dialog */}
+      <Dialog open={showImageUpload} onOpenChange={setShowImageUpload}>
+        <DialogContent className="bg-transparent border-none shadow-none max-w-2xl">
+          <DialogTitle className="sr-only">Extract Grades from Image</DialogTitle>
+          <ImageUploader 
+            onCoursesExtracted={handleCoursesExtracted}
+            onClose={() => setShowImageUpload(false)}
+          />
         </DialogContent>
       </Dialog>
     </div>
