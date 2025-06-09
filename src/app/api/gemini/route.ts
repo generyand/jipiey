@@ -1,5 +1,6 @@
 import { GoogleGenAI, createUserContent } from "@google/genai";
 import { NextResponse } from "next/server";
+import { Course, CourseData } from "@/lib/ai/types";
 
 // Initialize the Gemini API client with server-side API key
 const initGeminiClient = () => {
@@ -12,9 +13,35 @@ const initGeminiClient = () => {
   return new GoogleGenAI({ apiKey });
 };
 
+// Define types for API requests
+interface AnalyzeGPARequest {
+  courses: Course[];
+}
+
+interface ExtractGradesRequest {
+  imageBase64: string;
+  mimeType: string;
+}
+
+interface GenerateContentRequest {
+  prompt: string;
+}
+
+type RequestData = {
+  action: "analyzeGPA";
+  data: AnalyzeGPARequest;
+} | {
+  action: "extractGrades";
+  data: ExtractGradesRequest;
+} | {
+  action: "generateContent";
+  data: GenerateContentRequest;
+};
+
 export async function POST(request: Request) {
   try {
-    const { action, data } = await request.json();
+    const requestData = await request.json() as RequestData;
+    const { action, data } = requestData;
     const gemini = initGeminiClient();
     
     // Default model
@@ -41,7 +68,7 @@ export async function POST(request: Request) {
         const { courses } = data;
         
         // Format the courses data for the prompt
-        const courseData = courses.map((course: any, index: number) => {
+        const courseData = courses.map((course: Course, index: number) => {
           return `${index + 1}. ${course.title || 'Untitled Course'} (${course.units} units): Grade ${course.grade || 'N/A'}`;
         }).join('\n');
         
@@ -125,7 +152,7 @@ export async function POST(request: Request) {
         }
         
         jsonText = jsonText.substring(startIndex, endIndex + 1);
-        const courses = JSON.parse(jsonText);
+        const courses = JSON.parse(jsonText) as CourseData[];
         
         return NextResponse.json({ result: courses });
       }
@@ -133,8 +160,9 @@ export async function POST(request: Request) {
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in Gemini API route:", error);
-    return NextResponse.json({ error: error.message || "An error occurred" }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 } 
