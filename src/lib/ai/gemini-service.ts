@@ -1,5 +1,6 @@
 import { GoogleGenAI, createUserContent } from "@google/genai";
 import { getAIConfig, GEMINI_MODEL } from "./config";
+import { Course, CourseData } from "./types";
 
 export class GeminiService {
   private ai: GoogleGenAI;
@@ -36,7 +37,7 @@ export class GeminiService {
    * @param courses Array of course objects with units and grades
    * @returns Analysis and recommendations based on the course data
    */
-  async analyzeGPA(courses: any[]): Promise<string> {
+  async analyzeGPA(courses: Course[]): Promise<string> {
     try {
       // Format the courses data for the prompt
       const courseData = courses.map((course, index) => {
@@ -75,7 +76,7 @@ export class GeminiService {
    * @param imageFile The image file containing grade information
    * @returns Array of extracted courses with title, units, and grades
    */
-  async extractCoursesFromImage(imageFile: File): Promise<any[]> {
+  async extractCoursesFromImage(imageFile: File): Promise<CourseData[]> {
     try {
       // For vision tasks, use the multimodal model (gemini-2.0-flash is multimodal)
       const model = GEMINI_MODEL; // Use the same model as defined in config.ts
@@ -104,8 +105,12 @@ export class GeminiService {
         - If you're unsure about any value, use null
         - Only return the JSON array, nothing else
         - Make sure the JSON is valid and properly formatted
-        - If there are no column headers, note that units/credits are typically whole numbers (like 3, 4), while grades often have decimal points (like 3.0, 3.5, 2.7)
-        - Units typically range from 1-6, while grades typically range from 0-4
+        - CRITICAL DISTINCTION: Units MUST be whole numbers (integers like 1, 2, 3, 4) WITHOUT ANY decimal places
+        - Units are almost always between 1-6
+        - Grades CAN and OFTEN DO have decimal places (like 3.0, 3.5, 2.7, 4.0) 
+        - Grades typically range from 0.0 to 4.0
+        - If you see a column with decimal numbers, those are almost certainly grades, NOT units
+        - If you're unsure which column is which, units are ALWAYS whole numbers without decimals
       `;
 
       // Create content with image and prompt
@@ -136,7 +141,7 @@ export class GeminiService {
       }
       
       jsonText = jsonText.substring(startIndex, endIndex + 1);
-      const courses = JSON.parse(jsonText);
+      const courses = JSON.parse(jsonText) as CourseData[];
 
       return courses;
     } catch (error) {

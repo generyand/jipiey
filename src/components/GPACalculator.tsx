@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react';
-import { Trash2, PlusCircle, Calculator, MoreVertical, BookOpen, Brain, ImageIcon } from 'lucide-react';
+import { Trash2, PlusCircle, Calculator, MoreVertical, BookOpen, ImageIcon } from 'lucide-react';
 import { 
   Card, 
   CardHeader, 
@@ -158,9 +158,9 @@ export default function GPACalculator() {
                 </div>
                 <h3 className="text-xl font-medium text-white mb-2">No courses added yet</h3>
                 <p className="text-slate-300 max-w-md mb-8">
-                  Add your first course to begin calculating your GPA. You&apos;ll need course names, credit units, and grades.
+                  Add your first course manually or upload an image of your grade report and let our AI extract the information automatically. You&apos;ll save time and reduce errors!
                 </p>
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-col sm:flex-row">
                   <Button
                     onClick={addCourse}
                     className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg h-11 font-medium"

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useGemini } from '@/lib/ai/useGemini';
+import { Course } from '@/lib/ai/types';
 import { 
   Card, 
   CardHeader, 
@@ -14,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Brain, Loader2, AlertCircle, XCircle } from 'lucide-react';
 
 interface GeminiAnalysisProps {
-  courses: any[];
+  courses: Course[];
   onClose: () => void;
 }
 

@@ -2,6 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { useGradeExtraction } from '@/lib/ai/useGradeExtraction';
+import { Course } from '@/lib/ai/types';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { 
   Card, 
@@ -14,7 +16,7 @@ import {
 import { ImageIcon, UploadIcon, Loader2, XCircle, CheckCircle } from 'lucide-react';
 
 interface ImageUploaderProps {
-  onCoursesExtracted: (courses: any[]) => void;
+  onCoursesExtracted: (courses: Course[]) => void;
   onClose: () => void;
 }
 
@@ -25,7 +27,7 @@ export default function ImageUploader({ onCoursesExtracted, onClose }: ImageUplo
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { uploadImage, extracting } = useGradeExtraction();
+  const { uploadImage } = useGradeExtraction();
   
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -130,11 +132,15 @@ export default function ImageUploader({ onCoursesExtracted, onClose }: ImageUplo
             {preview ? (
               <div className="flex flex-col items-center space-y-4">
                 <div className="relative w-full max-w-xs mx-auto aspect-video">
-                  <img 
-                    src={preview} 
-                    alt="Preview" 
-                    className="rounded-md object-cover w-full h-full" 
-                  />
+                  {preview && (
+                    <Image 
+                      src={preview}
+                      alt="Image preview" 
+                      fill
+                      className="rounded-md object-cover"
+                      unoptimized // Since we're using a data URL, not a remote URL
+                    />
+                  )}
                 </div>
                 <p className="text-sm text-slate-300">
                   {selectedFile?.name}

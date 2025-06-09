@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { GeminiService } from './gemini-service';
+import { Course } from './types';
 
 interface UseGeminiReturn {
   analyzing: boolean;
   error: Error | null;
   analysis: string | null;
-  analyzeGPA: (courses: any[]) => Promise<void>;
+  analyzeGPA: (courses: Course[]) => Promise<void>;
   resetAnalysis: () => void;
 }
 
@@ -16,7 +17,7 @@ export function useGemini(): UseGeminiReturn {
   
   const geminiService = new GeminiService();
   
-  const analyzeGPA = async (courses: any[]) => {
+  const analyzeGPA = async (courses: Course[]) => {
     if (courses.length === 0) {
       setError(new Error('No courses to analyze'));
       return;
