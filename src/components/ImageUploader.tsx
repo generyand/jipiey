@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useGradeExtraction, GradeExtractionResult } from '@/lib/ai/useGradeExtraction';
 import { Course } from '@/types';
 import Image from 'next/image';
@@ -8,10 +8,8 @@ import { Button } from '@/components/ui/button';
 import { 
   Card, 
   CardContent, 
-  CardHeader, 
-  CardTitle 
 } from '@/components/ui/card';
-import { ImageIcon, UploadIcon, Loader2, XCircle, CheckCircle, X, AlertTriangle, Upload } from 'lucide-react';
+import {  Loader2, CheckCircle, X, AlertTriangle, Upload } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 
@@ -240,7 +238,7 @@ export default function ImageUploader({ onCoursesExtracted, onClose }: ImageUplo
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle className="text-orange-300 text-sm font-medium">No Academic Content Detected</AlertTitle>
                 <AlertDescription className="text-orange-200 text-xs mt-1 leading-relaxed space-y-2">
-                  <p>This image doesn't appear to contain academic records, transcripts, or grade reports.</p>
+                  <p>This image doesn&apos;t appear to contain academic records, transcripts, or grade reports.</p>
                   <div className="bg-orange-900/30 p-2 rounded-md">
                     <p className="font-medium text-orange-100 mb-1 text-xs">Please upload an image containing:</p>
                     <ul className="space-y-0.5 text-xs">
@@ -268,7 +266,7 @@ export default function ImageUploader({ onCoursesExtracted, onClose }: ImageUplo
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle className="text-red-300 text-sm font-medium">Cannot Distinguish Units from Grades</AlertTitle>
                 <AlertDescription className="text-red-200 text-xs mt-1 leading-relaxed space-y-2">
-                  <p>The AI couldn't clearly identify which column contains Units and which contains Grades in your academic record.</p>
+                  <p>The AI couldn&apos;t clearly identify which column contains Units and which contains Grades in your academic record.</p>
                   <div className="bg-red-900/30 p-2 rounded-md">
                     <p className="font-medium text-red-100 mb-1 text-xs">To fix this issue:</p>
                     <ul className="space-y-0.5 text-xs">
