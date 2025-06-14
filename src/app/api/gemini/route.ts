@@ -105,19 +105,21 @@ export async function POST(request: Request) {
           2. Units/Credits
           3. Grade (as a number between 0-4)
           
-          Return your answer as a JSON array with objects in this format:
-          [
-            {
-              "title": "Course name",
-              "units": number of units (as a number),
-              "grade": numeric grade (as a number between 0-4)
-            }
-          ]
+          Return your answer as a JSON object with this format:
+          {
+            "courses": [
+              {
+                "title": "Course name",
+                "units": number of units (as a number),
+                "grade": numeric grade (as a number between 0-4)
+              }
+            ],
+            "uncertain": boolean (true if you cannot clearly distinguish between units and grades columns)
+          }
 
           Important: 
           - Make sure to convert any letter grades (A, B, C, etc.) to their numeric equivalent on a 4.0 scale
           - If you're unsure about any value, use null
-          - Only return the JSON array, nothing else
           - Make sure the JSON is valid and properly formatted
           - CRITICAL DISTINCTION: Units MUST be whole numbers (integers like 1, 2, 3, 4) WITHOUT ANY decimal places
           - Units are almost always between 1-6
@@ -125,6 +127,9 @@ export async function POST(request: Request) {
           - Grades typically range from 0.0 to 4.0
           - If you see a column with decimal numbers, those are almost certainly grades, NOT units
           - If you're unsure which column is which, units are ALWAYS whole numbers without decimals
+          - SET "uncertain": true if you cannot clearly distinguish which column contains units vs grades
+          - SET "uncertain": true if the data layout is confusing or ambiguous
+          - Only return the JSON object, nothing else
         `;
         
         const response = await gemini.models.generateContent({
@@ -144,17 +149,20 @@ export async function POST(request: Request) {
         
         // Extract JSON from response
         let jsonText = response.text;
-        const startIndex = jsonText.indexOf('[');
-        const endIndex = jsonText.lastIndexOf(']');
+        const startIndex = jsonText.indexOf('{');
+        const endIndex = jsonText.lastIndexOf('}');
         
         if (startIndex === -1 || endIndex === -1) {
           return NextResponse.json({ error: "Could not find valid JSON in API response" }, { status: 500 });
         }
         
         jsonText = jsonText.substring(startIndex, endIndex + 1);
-        const courses = JSON.parse(jsonText) as CourseData[];
+        const extractedData = JSON.parse(jsonText) as { courses: CourseData[], uncertain?: boolean };
         
-        return NextResponse.json({ result: courses });
+        return NextResponse.json({ 
+          result: extractedData.courses,
+          uncertain: extractedData.uncertain || false
+        });
       }
         
       default:

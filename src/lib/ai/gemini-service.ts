@@ -67,9 +67,9 @@ export class GeminiService {
   /**
    * Extract course information from an uploaded image
    * @param imageFile The image file containing grade information
-   * @returns Array of extracted courses with title, units, and grades
+   * @returns Object containing array of extracted courses and uncertainty flag
    */
-  async extractCoursesFromImage(imageFile: File): Promise<CourseData[]> {
+  async extractCoursesFromImage(imageFile: File): Promise<{ courses: CourseData[], uncertain: boolean }> {
     try {
       // Convert file to base64 to send to the API
       const base64Data = await this.fileToBase64(imageFile);
@@ -94,7 +94,10 @@ export class GeminiService {
       }
       
       const data = await response.json();
-      return data.result;
+      return {
+        courses: data.result,
+        uncertain: data.uncertain || false
+      };
     } catch (error) {
       console.error('Error extracting courses from image:', error);
       throw error;
