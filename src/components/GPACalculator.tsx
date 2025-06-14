@@ -49,6 +49,9 @@ const generateId = () => {
          Math.random().toString(36).substring(2, 15);
 };
 
+// Local storage key
+const STORAGE_KEY = 'gpa-calculator-courses';
+
 export default function GPACalculator() {
   const [courses, setCourses] = useState<Course[]>([]);
   
@@ -58,6 +61,27 @@ export default function GPACalculator() {
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
   const [showAIAnalysis, setShowAIAnalysis] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
+
+  // Load courses from localStorage on initial render
+  useEffect(() => {
+    try {
+      const savedCourses = localStorage.getItem(STORAGE_KEY);
+      if (savedCourses) {
+        setCourses(JSON.parse(savedCourses));
+      }
+    } catch (error) {
+      console.error('Error loading courses from localStorage:', error);
+    }
+  }, []);
+
+  // Save courses to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(courses));
+    } catch (error) {
+      console.error('Error saving courses to localStorage:', error);
+    }
+  }, [courses]);
 
   const addCourse = () => {
     setCourses([
