@@ -108,9 +108,9 @@ export default function ImageUploader({ onCoursesExtracted, onClose }: ImageUplo
     <div className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" style={{ height: '100dvh' }}>
       {/* Modal Dialog for both mobile and desktop */}
       <div className="w-full max-w-2xl max-h-[90dvh] overflow-hidden rounded-xl">
-        <Card className="w-full h-auto bg-slate-900/95 border border-slate-700 text-white flex flex-col">
+        <Card className="w-full h-auto bg-slate-900/95 border border-slate-700 text-white flex flex-col gap-0 py-0">
           {/* Header */}
-          <div className="flex-shrink-0 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700/50 px-4 sm:px-6 pb-4">
+          <div className="flex-shrink-0 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700/50 px-4 sm:px-6 py-4">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-medium text-white">Extract Grades from Image</h2>
               <Button
@@ -128,7 +128,7 @@ export default function ImageUploader({ onCoursesExtracted, onClose }: ImageUplo
           <CardContent className="overflow-y-auto px-4 sm:px-6 py-2 space-y-5 max-h-[calc(90dvh-80px)]">
             {/* File Upload Section */}
             {!preview ? (
-              <div className="space-y-3">
+              <div className="space-y-4 py-4">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -153,7 +153,7 @@ export default function ImageUploader({ onCoursesExtracted, onClose }: ImageUplo
                 </Button>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 pt-4">
                 <input
                   ref={fileInputRef}
                   type="file"
