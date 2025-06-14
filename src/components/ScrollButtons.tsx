@@ -132,31 +132,39 @@ export default function ScrollButtons({
   }
   
   return (
-    <div className={cn("fixed right-4 bottom-4 flex flex-col gap-2 z-50", className)}>
+    <div className={cn("fixed right-6 bottom-6 flex flex-col gap-3 z-50", className)}>
       {/* Up button - only show when scrolled down */}
       <button
         onClick={handleScrollTop}
         className={cn(
-          "flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 text-white w-12 h-12 shadow-lg cursor-pointer transition-opacity duration-300",
-          !showTopButton && "opacity-0 pointer-events-none",
+          "flex items-center justify-center rounded-full w-10 h-10",
+          "bg-white/10 backdrop-blur-sm hover:bg-white/20",
+          "text-white/70 hover:text-white",
+          "transition-all duration-300 ease-in-out",
+          "border border-white/10 hover:border-white/20",
+          !showTopButton && "opacity-0 pointer-events-none scale-90",
           buttonClassName
         )}
         aria-label="Scroll to top"
       >
-        <ChevronUp size={24} />
+        <ChevronUp size={20} />
       </button>
       
       {/* Down button - only show when not at bottom */}
       <button
         onClick={handleScrollBottom}
         className={cn(
-          "flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 text-white w-12 h-12 shadow-lg cursor-pointer transition-opacity duration-300", 
-          !showBottomButton && "opacity-0 pointer-events-none",
+          "flex items-center justify-center rounded-full w-10 h-10",
+          "bg-white/10 backdrop-blur-sm hover:bg-white/20",
+          "text-white/70 hover:text-white",
+          "transition-all duration-300 ease-in-out",
+          "border border-white/10 hover:border-white/20",
+          !showBottomButton && "opacity-0 pointer-events-none scale-90",
           buttonClassName
         )}
         aria-label="Scroll to bottom"
       >
-        <ChevronDown size={24} />
+        <ChevronDown size={20} />
       </button>
     </div>
   );
