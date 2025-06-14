@@ -35,6 +35,10 @@ import {
 } from "@/components/ui/popover";
 import GeminiAnalysis from './GeminiAnalysis';
 import ImageUploader from './ImageUploader';
+import DuplicateCoursesDialog from './DuplicateCoursesDialog';
+import { useDuplicateHandling } from '@/hooks/useDuplicateHandling';
+import { DuplicateHandlingResult } from '@/lib/courseUtils';
+import { toast } from 'sonner';
 
 interface Course {
   id: string;
@@ -63,6 +67,15 @@ export default function GPACalculator() {
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [showClearDataDialog, setShowClearDataDialog] = useState(false);
 
+  // Duplicate course handling
+  const {
+    showDuplicateDialog,
+    pendingCourses,
+    handleCourseAddition,
+    confirmDuplicateHandling,
+    cancelDuplicateHandling
+  } = useDuplicateHandling();
+
   // Load courses from localStorage on initial render
   useEffect(() => {
     try {
@@ -85,10 +98,8 @@ export default function GPACalculator() {
   }, [courses]);
 
   const addCourse = () => {
-    setCourses([
-      ...courses,
-      { id: generateId(), title: '', units: 3, grade: 0.0 }
-    ]);
+    const newCourse = { id: generateId(), title: '', units: 3, grade: 0.0 };
+    setCourses([...courses, newCourse]);
   };
 
   const confirmDelete = (id: string) => {
@@ -121,6 +132,21 @@ export default function GPACalculator() {
       }
       return course;
     }));
+
+    // Check for duplicates when updating title
+    if (field === 'title' && typeof value === 'string' && value.trim().length > 0) {
+      const duplicateExists = courses.some(course => 
+        course.id !== id && 
+        course.title.toLowerCase().trim() === value.toLowerCase().trim()
+      );
+      
+      if (duplicateExists) {
+        toast.warning('Duplicate course detected', {
+          description: `A course with the title "${value}" already exists.`,
+          duration: 3000,
+        });
+      }
+    }
   };
 
   const calculateGPA = useCallback(() => {
@@ -156,9 +182,26 @@ export default function GPACalculator() {
 
   // Handler for extracted courses from image
   const handleCoursesExtracted = (extractedCourses: Course[]) => {
-    // Replace existing courses with extracted ones or merge them
-    setCourses(prev => [...prev, ...extractedCourses]);
-    setShowImageUpload(false);
+    // Use duplicate handling to merge courses intelligently
+    handleCourseAddition(
+      courses,
+      extractedCourses,
+      (result: DuplicateHandlingResult) => {
+        setCourses(prev => [...prev, ...result.coursesToAdd]);
+        setShowImageUpload(false);
+        
+        // Show success message with details
+        if (result.message) {
+          toast.success('Courses processed!', {
+            description: result.message,
+            duration: 4000,
+          });
+        }
+      },
+      () => {
+        setShowImageUpload(false);
+      }
+    );
   };
 
   const clearAllData = () => {
@@ -488,6 +531,15 @@ export default function GPACalculator() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Duplicate Courses Dialog */}
+      <DuplicateCoursesDialog
+        open={showDuplicateDialog}
+        existingCourses={pendingCourses?.existing || []}
+        newCourses={pendingCourses?.new || []}
+        onConfirm={confirmDuplicateHandling}
+        onCancel={cancelDuplicateHandling}
+      />
     </div>
   );
 } 
