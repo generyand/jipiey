@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="public/jipiey.webp" alt="Jipiey Logo" width="200" height="200" />
+</div>
+
 # Jipiey - AI-Powered GPA Calculator
 
 Jipiey is an intelligent GPA calculator that uses AI to analyze and process grade tables from uploaded images. Simply upload an image of your grades in tabular format, and our AI will automatically calculate your GPA and generate a structured table from the image.
@@ -23,13 +27,11 @@ pnpm install
 The application uses Google's Gemini AI for grade analysis. To set up the Gemini API:
 
 1. Visit [Google AI Studio](https://ai.google.dev/) to get your Gemini API key
-2. Create a `.env.local` file in the root of the project
+2. Create a `.env` file in the root of the project
 3. Add your API key to the file:
    ```env
-   # Use GEMINI_API_KEY (not prefixed with NEXT_PUBLIC) to keep it server-side only
    GEMINI_API_KEY=your_gemini_api_key_here
    ```
-   ⚠️ Note: Never use NEXT_PUBLIC_ prefix for API keys as it exposes them to the client
 
 Then, run the development server:
 
@@ -49,8 +51,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 - [Next.js](https://nextjs.org) - React framework for production
 - [pnpm](https://pnpm.io) - Fast, disk space efficient package manager
-- [Google Gemini AI](https://ai.google.dev/) - AI for analysis and recommendations
-- AI/ML technologies for image processing and data extraction
+- [Google Gemini AI](https://ai.google.dev/) - AI for image extraction and analysis
 
 ## Development
 
