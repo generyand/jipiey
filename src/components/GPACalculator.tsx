@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react';
-import { Trash2, PlusCircle, Calculator, MoreVertical, BookOpen, ImageIcon } from 'lucide-react';
+import { Trash2, PlusCircle, Calculator, MoreVertical, BookOpen, ImageIcon, Trash } from 'lucide-react';
 import { 
   Card, 
   CardHeader, 
@@ -61,6 +61,7 @@ export default function GPACalculator() {
   const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
   const [showAIAnalysis, setShowAIAnalysis] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
+  const [showClearDataDialog, setShowClearDataDialog] = useState(false);
 
   // Load courses from localStorage on initial render
   useEffect(() => {
@@ -158,6 +159,20 @@ export default function GPACalculator() {
     // Replace existing courses with extracted ones or merge them
     setCourses(prev => [...prev, ...extractedCourses]);
     setShowImageUpload(false);
+  };
+
+  const clearAllData = () => {
+    setCourses([]);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      console.error('Error clearing localStorage:', error);
+    }
+    setShowClearDataDialog(false);
+  };
+
+  const cancelClearData = () => {
+    setShowClearDataDialog(false);
   };
 
   return (
@@ -366,6 +381,16 @@ export default function GPACalculator() {
                   >
                     <ImageIcon size={16} className="mr-1" /> Upload Image
                   </Button>
+
+                  {courses.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      onClick={() => setShowClearDataDialog(true)}
+                      className="cursor-pointer flex-1 sm:flex-initial flex items-center bg-red-500/10 justify-center gap-2 text-sm text-red-400 hover:bg-red-500/20 hover:text-red-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
+                    >
+                      <Trash size={16} className="mr-1" /> Clear All
+                    </Button>
+                  )}
                 </div>
                 
                 <div className="flex items-center justify-center w-full sm:w-auto">
@@ -428,14 +453,39 @@ export default function GPACalculator() {
         </DialogContent>
       </Dialog>
 
-      {/* Image Upload Dialog */}
-      <Dialog open={showImageUpload} onOpenChange={setShowImageUpload}>
-        <DialogContent className="bg-transparent border-none shadow-none max-w-2xl">
-          <DialogTitle className="sr-only">Extract Grades from Image</DialogTitle>
-          <ImageUploader 
-            onCoursesExtracted={handleCoursesExtracted}
-            onClose={() => setShowImageUpload(false)}
-          />
+      {/* Image Upload Modal */}
+      {showImageUpload && (
+        <ImageUploader 
+          onCoursesExtracted={handleCoursesExtracted}
+          onClose={() => setShowImageUpload(false)}
+        />
+      )}
+
+      {/* Clear All Data Confirmation Dialog */}
+      <Dialog open={showClearDataDialog} onOpenChange={setShowClearDataDialog}>
+        <DialogContent className="bg-slate-900 border-white/10 text-white max-w-xs sm:max-w-md mx-auto">
+          <DialogHeader className="space-y-3 pb-2">
+            <DialogTitle className="text-xl">Clear All Data</DialogTitle>
+            <DialogDescription className="text-slate-300">
+              Are you sure you want to clear all courses and data? This will permanently delete all your saved courses and cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex sm:justify-end gap-3 mt-6 pt-2 border-t border-white/10">
+            <Button
+              variant="outline"
+              onClick={cancelClearData}
+              className="border-white/10 bg-slate-800 hover:bg-white/5 text-white h-10"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={clearAllData}
+              className="bg-red-600 hover:bg-red-700 h-10"
+            >
+              Clear All Data
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

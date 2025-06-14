@@ -117,19 +117,49 @@ export async function POST(request: Request) {
             "uncertain": boolean (true if you cannot clearly distinguish between units and grades columns)
           }
 
-          Important: 
-          - Make sure to convert any letter grades (A, B, C, etc.) to their numeric equivalent on a 4.0 scale
-          - If you're unsure about any value, use null
-          - Make sure the JSON is valid and properly formatted
-          - CRITICAL DISTINCTION: Units MUST be whole numbers (integers like 1, 2, 3, 4) WITHOUT ANY decimal places
-          - Units are almost always between 1-6
-          - Grades CAN and OFTEN DO have decimal places (like 3.0, 3.5, 2.7, 4.0) 
-          - Grades typically range from 0.0 to 4.0
-          - If you see a column with decimal numbers, those are almost certainly grades, NOT units
-          - If you're unsure which column is which, units are ALWAYS whole numbers without decimals
-          - SET "uncertain": true if you cannot clearly distinguish which column contains units vs grades
-          - SET "uncertain": true if the data layout is confusing or ambiguous
-          - Only return the JSON object, nothing else
+          MANDATORY COLUMN IDENTIFICATION RULES:
+          
+          1. DECIMAL DETECTION RULE (ABSOLUTE):
+             - If you see ANY column with decimal values (like 3.5, 2.7, 4.0, 1.3), that column is AUTOMATICALLY the GRADES column
+             - The other numerical column (with whole numbers) is AUTOMATICALLY the UNITS column
+             - This rule is NON-NEGOTIABLE and overrides any other interpretation
+          
+          2. COLUMN PAIRING LOGIC (REQUIRED):
+             - FIRST: Search the entire image for ANY column containing decimal values
+             - IF found: Decimal column = GRADES, Other numerical column = UNITS
+             - IF no decimal column exists: Look for two numerical columns and try to identify based on typical ranges
+             - Units are typically 1-6 (whole numbers only)
+             - Grades are typically 0.0-4.0 (can have decimals)
+          
+          3. UNCERTAINTY CONDITIONS (AUTOMATIC):
+             - SET "uncertain": true if you find decimal values in what appears to be a units column
+             - SET "uncertain": true if ALL numerical columns contain only whole numbers AND you cannot distinguish which is which
+             - SET "uncertain": true if there are no clear numerical columns for both units and grades
+             - SET "uncertain": true if the image layout is too unclear to identify columns
+          
+          4. DATA VALIDATION (STRICT):
+             - Units MUST be whole numbers (1, 2, 3, 4, 5, 6) - NEVER decimals
+             - Grades CAN be decimals (3.5, 2.7, 4.0) or whole numbers (3, 4, 2)
+             - Convert letter grades (A, B, C, etc.) to numeric equivalent on 4.0 scale
+             - Use null for any unclear values
+          
+          5. PROCESSING ORDER (MANDATORY):
+             Step 1: Scan entire image for decimal values
+             Step 2: If decimals found → Decimal column = Grades, Other = Units
+             Step 3: If no decimals → Try to identify by typical ranges and context
+             Step 4: If still unclear → Return "uncertain": true
+          
+          Return ONLY valid JSON in this exact format:
+          {
+            "courses": [
+              {
+                "title": "Course name or null",
+                "units": whole_number_only,
+                "grade": numeric_grade_0_to_4
+              }
+            ],
+            "uncertain": boolean
+          }
         `;
         
         const response = await gemini.models.generateContent({
@@ -142,6 +172,8 @@ export async function POST(request: Request) {
             ]
           }]
         });
+
+        console.log('Gemini API Response:', JSON.stringify(response, null, 2));
         
         if (!response.text) {
           return NextResponse.json({ error: "Empty response from Gemini API" }, { status: 500 });
