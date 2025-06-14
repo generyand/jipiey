@@ -99,24 +99,26 @@ export async function POST(request: Request) {
         const { imageBase64, mimeType } = data;
         
         const prompt = `
-          Please extract course information from this image containing grades or academic records.
-          For each course, identify:
-          1. Course Title (if available)
-          2. Units/Credits
-          3. Grade (as a number between 0-4)
+          Analyze this image to extract course information from academic records, transcripts, or grade reports.
           
-          Return your answer as a JSON object with this format:
+          FIRST: Determine if this image contains academic/educational content:
+          - Look for course names, grades, units/credits, transcripts, grade reports
+          - Academic tables with course information
+          - Educational institution documents
+          
+          IF NO ACADEMIC CONTENT FOUND:
+          Return this exact JSON:
           {
-            "courses": [
-              {
-                "title": "Course name",
-                "units": number of units (as a number),
-                "grade": numeric grade (as a number between 0-4)
-              }
-            ],
-            "uncertain": boolean (true if you cannot clearly distinguish between units and grades columns)
+            "success": false,
+            "error": "no_academic_content",
+            "message": "This image does not appear to contain academic records or course information.",
+            "courses": [],
+            "uncertain": false
           }
-
+          
+          IF ACADEMIC CONTENT FOUND:
+          Extract course information with these rules:
+          
           MANDATORY COLUMN IDENTIFICATION RULES:
           
           1. DECIMAL DETECTION RULE (ABSOLUTE):
@@ -144,13 +146,17 @@ export async function POST(request: Request) {
              - Use null for any unclear values
           
           5. PROCESSING ORDER (MANDATORY):
-             Step 1: Scan entire image for decimal values
-             Step 2: If decimals found → Decimal column = Grades, Other = Units
-             Step 3: If no decimals → Try to identify by typical ranges and context
-             Step 4: If still unclear → Return "uncertain": true
+             Step 1: Check if image contains academic content
+             Step 2: Scan entire image for decimal values
+             Step 3: If decimals found → Decimal column = Grades, Other = Units
+             Step 4: If no decimals → Try to identify by typical ranges and context
+             Step 5: If still unclear → Return "uncertain": true
           
-          Return ONLY valid JSON in this exact format:
+          FOR SUCCESSFUL EXTRACTION, return this exact JSON format:
           {
+            "success": true,
+            "error": null,
+            "message": "Successfully extracted course information.",
             "courses": [
               {
                 "title": "Course name or null",
@@ -160,6 +166,17 @@ export async function POST(request: Request) {
             ],
             "uncertain": boolean
           }
+          
+          FOR UNCERTAIN EXTRACTION, return this exact JSON format:
+          {
+            "success": false,
+            "error": "uncertain_data",
+            "message": "Could not clearly distinguish between units and grades columns.",
+            "courses": [],
+            "uncertain": true
+          }
+          
+          Return ONLY valid JSON, nothing else.
         `;
         
         const response = await gemini.models.generateContent({
@@ -189,12 +206,30 @@ export async function POST(request: Request) {
         }
         
         jsonText = jsonText.substring(startIndex, endIndex + 1);
-        const extractedData = JSON.parse(jsonText) as { courses: CourseData[], uncertain?: boolean };
         
-        return NextResponse.json({ 
-          result: extractedData.courses,
-          uncertain: extractedData.uncertain || false
-        });
+        try {
+          const extractedData = JSON.parse(jsonText) as {
+            success: boolean;
+            error: string | null;
+            message: string;
+            courses: CourseData[];
+            uncertain: boolean;
+          };
+          
+          // Return the structured response directly
+          return NextResponse.json({
+            success: extractedData.success,
+            error: extractedData.error,
+            message: extractedData.message,
+            courses: extractedData.courses,
+            uncertain: extractedData.uncertain
+          });
+        } catch (parseError) {
+          console.error('Error parsing JSON response:', parseError);
+          return NextResponse.json({ 
+            error: "Failed to parse AI response as valid JSON" 
+          }, { status: 500 });
+        }
       }
         
       default:

@@ -3,6 +3,9 @@ import { GeminiService } from './gemini-service';
 import { Course } from '@/types';
 
 export interface GradeExtractionResult {
+  success: boolean;
+  error: string | null;
+  message: string;
   courses: Course[];
   uncertain: boolean;
 }
@@ -30,6 +33,9 @@ export function useGradeExtraction() {
       }));
       
       return {
+        success: result.success,
+        error: result.error,
+        message: result.message,
         courses: coursesWithIds,
         uncertain: result.uncertain
       };
