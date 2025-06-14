@@ -98,7 +98,7 @@ export default function ScrollButtons({
         top: 0,
         behavior: 'smooth'
       });
-    } catch (e) {
+    } catch {
       // Fallback for older browsers
       window.scrollTo(0, 0);
     }
@@ -116,7 +116,7 @@ export default function ScrollButtons({
         top: documentHeight,
         behavior: 'smooth'
       });
-    } catch (e) {
+    } catch {
       // Fallback for older browsers
       const documentHeight = Math.max(
         document.body.scrollHeight,
