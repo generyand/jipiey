@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Course } from '@/types';
 import { DuplicateStrategy } from '@/hooks/useDuplicateHandling';
-import { findDuplicateCourses, normalizeCourseTitle } from '@/lib/courseUtils';
+import { findDuplicateCourses } from '@/lib/courseUtils';
 import { 
   Dialog, 
   DialogContent, 

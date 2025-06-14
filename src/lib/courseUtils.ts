@@ -77,7 +77,7 @@ export function handleDuplicateCourses(
   const duplicateNewCourseIds = new Set(duplicates.map(d => d.newCourse.id));
   const nonDuplicateCourses = newCourses.filter(course => !duplicateNewCourseIds.has(course.id));
   
-  let coursesToAdd: Course[] = [...nonDuplicateCourses];
+  const coursesToAdd: Course[] = [...nonDuplicateCourses];
   let message = '';
   
   const duplicateActions = duplicates.map(({ existingCourse, newCourse }) => {
