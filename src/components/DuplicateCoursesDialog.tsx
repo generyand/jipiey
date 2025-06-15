@@ -8,7 +8,7 @@ import {
   Dialog, 
   DialogContent, 
   DialogHeader, 
-  DialogTitle, 
+  DialogTitle,
   DialogDescription,
   DialogFooter 
 } from '@/components/ui/dialog';
@@ -58,7 +58,7 @@ function MobileDetailDialog({
   
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-slate-900 border-white/10 text-white w-[95vw] h-[85vh] flex flex-col overflow-hidden">
+      <DialogContent className="bg-slate-900 border-white/10 text-white w-[95vw] h-[80vh] max-h-[550px] flex flex-col overflow-hidden">
         <DialogHeader className="flex-shrink-0 pb-4 border-b border-white/10">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-lg font-bold text-white">
@@ -223,7 +223,7 @@ export default function DuplicateCoursesDialog({
 
   return (
     <Dialog open={open} onOpenChange={onCancel}>
-      <DialogContent className="bg-slate-900 border-white/10 text-white max-w-6xl w-[95vw] h-[90vh] flex flex-col overflow-hidden">
+      <DialogContent className="bg-slate-900 border-white/10 text-white max-w-6xl w-[95vw] h-[85vh] max-h-[600px] flex flex-col overflow-hidden">
         <DialogHeader className="flex-shrink-0 pb-4 border-b border-white/10">
           {/* Desktop Header */}
           <div className="hidden md:flex items-start gap-4">
