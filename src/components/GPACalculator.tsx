@@ -407,12 +407,12 @@ export default function GPACalculator() {
                 ))}
               </div>
               
-              <div className="p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-t border-white/5">
-                <div className="flex w-full sm:w-auto gap-2">
+              <div className="p-4 sm:p-5 flex flex-col-reverse sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-t border-white/5">
+                <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
                   <Button
                     variant="ghost"
                     onClick={addCourse}
-                    className="cursor-pointer flex-1 sm:flex-initial flex items-center bg-blue-500/10 justify-center gap-2 text-sm text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
+                    className="cursor-pointer flex items-center bg-blue-500/10 justify-center gap-2 text-sm text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
                   >
                     <PlusCircle size={16} className="mr-1" /> Add Course
                   </Button>
@@ -420,7 +420,7 @@ export default function GPACalculator() {
                   <Button
                     variant="ghost"
                     onClick={() => setShowImageUpload(true)}
-                    className="cursor-pointer flex-1 sm:flex-initial flex items-center bg-purple-500/10 justify-center gap-2 text-sm text-purple-400 hover:bg-purple-500/20 hover:text-purple-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
+                    className="cursor-pointer flex items-center bg-purple-500/10 justify-center gap-2 text-sm text-purple-400 hover:bg-purple-500/20 hover:text-purple-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
                   >
                     <ImageIcon size={16} className="mr-1" /> Upload Image
                   </Button>
@@ -429,7 +429,7 @@ export default function GPACalculator() {
                     <Button
                       variant="ghost"
                       onClick={() => setShowClearDataDialog(true)}
-                      className="cursor-pointer flex-1 sm:flex-initial flex items-center bg-red-500/10 justify-center gap-2 text-sm text-red-400 hover:bg-red-500/20 hover:text-red-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
+                      className="col-span-2 cursor-pointer flex items-center bg-red-500/10 justify-center gap-2 text-sm text-red-400 hover:bg-red-500/20 hover:text-red-300 py-2 px-4 sm:px-3 rounded-lg sm:rounded-md h-10"
                     >
                       <Trash size={16} className="mr-1" /> Clear All
                     </Button>
